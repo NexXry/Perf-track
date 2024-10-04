@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Tracking;
+use DateInterval;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,28 +18,24 @@ class TrackingRepository extends ServiceEntityRepository
         parent::__construct($registry, Tracking::class);
     }
 
-    //    /**
-    //     * @return Tracking[] Returns an array of Tracking objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('t.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findTrackingsByExerciceForCurrentWeek($exercice)
+    {
+        $startOfWeek = new DateTime();
+        $startOfWeek->setISODate((int)$startOfWeek->format("o"), (int)$startOfWeek->format("W"), 1);
+        $startOfWeek->setTime(0, 0, 0);
 
-    //    public function findOneBySomeField($value): ?Tracking
-    //    {
-    //        return $this->createQueryBuilder('t')
-    //            ->andWhere('t.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $endOfWeek = clone $startOfWeek;
+        $endOfWeek->add(new DateInterval('P6D'));
+        $endOfWeek->setTime(23, 59, 59);
+
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.Exercice = :exerciceId')
+            ->andWhere('t.createdAt BETWEEN :startOfWeek AND :endOfWeek')
+            ->setParameter('exerciceId', $exercice)
+            ->setParameter('startOfWeek', $startOfWeek)
+            ->setParameter('endOfWeek', $endOfWeek)
+            ->orderBy('t.createdAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

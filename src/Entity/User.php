@@ -39,11 +39,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Exercice>
      */
     #[ORM\ManyToMany(targetEntity: Exercice::class)]
-    private Collection $Exercies;
+    private Collection $Exercices;
+
+    #[ORM\Column]
+    private ?int $objective = null;
+
+    /**
+     * @var Collection<int, Tracking>
+     */
+    #[ORM\OneToMany(targetEntity: Tracking::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $Trackings;
 
     public function __construct()
     {
-        $this->Exercies = new ArrayCollection();
+        $this->Exercices = new ArrayCollection();
+        $this->Trackings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -70,13 +80,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        return (string)$this->username;
     }
 
     /**
+     * @return list<string>
      * @see UserInterface
      *
-     * @return list<string>
      */
     public function getRoles(): array
     {
@@ -124,23 +134,65 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Exercice>
      */
-    public function getExercies(): Collection
+    public function getExercices(): Collection
     {
-        return $this->Exercies;
+        return $this->Exercices;
     }
 
-    public function addExercy(Exercice $exercy): static
+    public function addExercices(Exercice $exercy): static
     {
-        if (!$this->Exercies->contains($exercy)) {
-            $this->Exercies->add($exercy);
+        if (!$this->Exercices->contains($exercy)) {
+            $this->Exercices->add($exercy);
         }
 
         return $this;
     }
 
-    public function removeExercy(Exercice $exercy): static
+    public function removeExercices(Exercice $exercy): static
     {
-        $this->Exercies->removeElement($exercy);
+        $this->Exercices->removeElement($exercy);
+
+        return $this;
+    }
+
+    public function getObjective(): ?int
+    {
+        return $this->objective;
+    }
+
+    public function setObjective(int $objective): static
+    {
+        $this->objective = $objective;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tracking>
+     */
+    public function getTrackings(): Collection
+    {
+        return $this->Trackings;
+    }
+
+    public function addTracking(Tracking $tracking): static
+    {
+        if (!$this->Trackings->contains($tracking)) {
+            $this->Trackings->add($tracking);
+            $tracking->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTracking(Tracking $tracking): static
+    {
+        if ($this->Trackings->removeElement($tracking)) {
+            // set the owning side to null (unless already changed)
+            if ($tracking->getUser() === $this) {
+                $tracking->setUser(null);
+            }
+        }
 
         return $this;
     }

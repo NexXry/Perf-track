@@ -3,4 +3,8 @@
 {% block title %}Hello ExercicesController!{% endblock %}
 
 {% block body %}
+    <div class="flex flex-col gap-6 items-center card bg-base-200 overflow-x-auto h-screen my-6 mx-6">
+        <h2 class="text-center text-3xl font-medium mt-4">Today Tracking</h2>
+        <div {{ vue_component('ExerciceTracking',{exercices: exercices,trackings: trackings}) }}></div>
+    </div>
 {% endblock %}
