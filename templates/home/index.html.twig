@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+    <div class="card bg-base-200 overflow-x-auto h-screen my-6 mx-6">
+        <div style="height: 300px;" class="min-h-80 mx-5 mt-5">
+            {{ render_chart(chart) }}
+        </div>
+        <div style="height: 300px;" class="min-h-80 mx-5 mt-5">
+            {{ render_chart(chart) }}
+        </div>
+        <div style="height: 300px;" class="min-h-80 mx-5 mt-5">
+            {{ render_chart(chart) }}
+        </div>
+        <div style="height: 300px;" class="min-h-80 mx-5 mt-5">
+            {{ render_chart(chart) }}
+        </div>
+    </div>
+{% endblock %}
